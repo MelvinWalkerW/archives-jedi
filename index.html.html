@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archives Jedi — Chroniques de l'Ordre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080B10;
+    --panel:#0F151E;
+    --panel-2:#131B26;
+    --line:#243244;
+    --parchment:#DCD6C2;
+    --parchment-dim:#8E8A7A;
+    --gold:#E3A857;
+    --blue:#5BA3D9;
+    --green:#6FBF8B;
+    --violet:#9B7FD4;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--parchment);
+    font-family:'Rajdhani',sans-serif;
+    font-weight:500;
+    line-height:1.6;
+  }
+  h1,h2,h3,.display{
+    font-family:'Cinzel',serif;
+    letter-spacing:.02em;
+  }
+  a{color:inherit;}
+  ::selection{background:var(--gold);color:#100C04;}
+
+  /* ---------- background texture ---------- */
+  .starfield{
+    position:fixed;inset:0;z-index:-2;
+    background:
+      radial-gradient(1px 1px at 20% 30%, rgba(220,214,194,.5) 0, transparent 100%),
+      radial-gradient(1px 1px at 70% 60%, rgba(220,214,194,.35) 0, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 80%, rgba(220,214,194,.4) 0, transparent 100%),
+      radial-gradient(1px 1px at 85% 15%, rgba(220,214,194,.3) 0, transparent 100%),
+      radial-gradient(1px 1px at 55% 45%, rgba(220,214,194,.25) 0, transparent 100%),
+      linear-gradient(180deg,#050709 0%,#080B10 40%,#0A0E14 100%);
+    background-size: 100% 100%;
+  }
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 5vw;
+    background:rgba(8,11,16,.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--parchment);}
+  .brand-mark{width:16px;height:16px;background:linear-gradient(135deg,var(--blue),var(--violet));transform:rotate(45deg);box-shadow:0 0 12px rgba(91,163,217,.7);}
+  nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;}
+  nav a{
+    font-size:13px;text-transform:uppercase;letter-spacing:.1em;
+    text-decoration:none;color:var(--parchment-dim);
+    transition:color .25s;
+    border-bottom:1px solid transparent;
+    padding-bottom:3px;
+  }
+  nav a:hover{color:var(--gold);border-color:var(--gold);}
+  .nav-toggle{display:none;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:92vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+    padding:80px 6vw 60px;
+    position:relative;
+    overflow:hidden;
+  }
+  .eyebrow{
+    font-size:12px;letter-spacing:.35em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:22px;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem,7vw,5.2rem);
+    font-weight:900;
+    margin:0;
+    background:linear-gradient(180deg,#F3EEDD 0%, var(--parchment) 55%, #A79E82 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 60px rgba(91,163,217,.15);
+  }
+  .hero .sub{
+    max-width:560px;margin:22px auto 0;
+    color:var(--parchment-dim);
+    font-size:18px;
+    font-weight:500;
+  }
+
+  /* holocron */
+  .holocron-wrap{
+    margin:56px auto 0;
+    width:180px;height:180px;
+    perspective:900px;
+  }
+  .holocron{
+    width:100%;height:100%;
+    position:relative;
+    transform-style:preserve-3d;
+    animation:spin 14s linear infinite;
+  }
+  @keyframes spin{from{transform:rotateY(0) rotateX(18deg);}to{transform:rotateY(360deg) rotateX(18deg);}}
+  .face{
+    position:absolute;width:127px;height:127px;top:26px;left:26px;
+    border:1px solid rgba(91,163,217,.55);
+    background:linear-gradient(135deg, rgba(91,163,217,.10), rgba(155,127,212,.10));
+    box-shadow:inset 0 0 30px rgba(91,163,217,.15), 0 0 40px rgba(91,163,217,.12);
+  }
+  .f1{transform:rotateY(0deg) translateZ(63px);}
+  .f2{transform:rotateY(90deg) translateZ(63px);}
+  .f3{transform:rotateY(180deg) translateZ(63px);}
+  .f4{transform:rotateY(270deg) translateZ(63px);}
+  .f5{transform:rotateX(90deg) translateZ(63px);}
+  .f6{transform:rotateX(-90deg) translateZ(63px);}
+  .core{
+    position:absolute;width:26px;height:26px;top:77px;left:77px;
+    background:radial-gradient(circle,#EAF6FF 0%, var(--blue) 45%, transparent 75%);
+    border-radius:50%;
+    filter:blur(1px);
+    animation:pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:.65;transform:scale(1);}50%{opacity:1;transform:scale(1.35);}}
+  .holocron-caption{margin-top:18px;font-size:12px;letter-spacing:.25em;text-transform:uppercase;color:var(--parchment-dim);}
+
+  .scroll-cue{position:absolute;bottom:28px;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--parchment-dim);}
+  .scroll-cue::after{content:"";display:block;width:1px;height:28px;background:linear-gradient(var(--gold),transparent);margin:8px auto 0;}
+
+  /* ---------- sections ---------- */
+  section{padding:120px 6vw;max-width:1180px;margin:0 auto;}
+  .section-head{display:flex;align-items:baseline;gap:18px;margin-bottom:52px;}
+  .section-num{font-family:'Cinzel',serif;font-size:14px;color:var(--gold);letter-spacing:.15em;}
+  .section-head h2{font-size:clamp(1.8rem,3.4vw,2.6rem);margin:0;color:var(--parchment);}
+  .section-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+  .kicker{color:var(--parchment-dim);max-width:640px;margin:-30px 0 50px;font-size:16px;}
+
+  /* code doctrine */
+  .code-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);}
+  .code-cell{background:var(--panel);padding:34px 30px;}
+  .code-cell .tenet{font-family:'Cinzel',serif;font-size:19px;color:var(--gold);margin-bottom:10px;}
+  .code-cell p{margin:0;color:var(--parchment-dim);font-size:15px;}
+  @media (max-width:720px){.code-grid{grid-template-columns:1fr;}}
+
+  /* classes */
+  .path-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+  @media (max-width:820px){.path-grid{grid-template-columns:1fr;}}
+  .path-card{
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    border:1px solid var(--line);
+    padding:38px 32px;
+    position:relative;
+  }
+  .path-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  }
+  .path-card.knight::before{background:linear-gradient(90deg,var(--blue),transparent);}
+  .path-card.consular::before{background:linear-gradient(90deg,var(--violet),transparent);}
+  .path-card h3{font-size:24px;margin:0 0 6px;}
+  .path-card .tag{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--parchment-dim);margin-bottom:20px;display:block;}
+  .path-card p{color:var(--parchment-dim);font-size:15.5px;margin:0 0 20px;}
+  .spec-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px;}
+  .spec-pill{
+    border:1px solid var(--line);padding:8px 14px;font-size:13px;
+    color:var(--parchment);letter-spacing:.03em;
+  }
+  .knight .spec-pill{border-color:rgba(91,163,217,.4);}
+  .consular .spec-pill{border-color:rgba(155,127,212,.4);}
+
+  /* force powers */
+  .force-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;}
+  .force-item{border-left:2px solid var(--blue);padding:6px 0 6px 20px;}
+  .force-item h4{margin:0 0 6px;font-family:'Cinzel',serif;font-size:16px;font-weight:600;}
+  .force-item p{margin:0;font-size:14.5px;color:var(--parchment-dim);}
+
+  /* combat forms */
+  .forms-table{width:100%;border-collapse:collapse;font-size:15px;}
+  .forms-table th{
+    text-align:left;font-family:'Cinzel',serif;font-weight:600;font-size:13px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--gold);
+    padding:12px 16px;border-bottom:1px solid var(--line);
+  }
+  .forms-table td{padding:16px;border-bottom:1px solid var(--line);color:var(--parchment-dim);vertical-align:top;}
+  .forms-table td:first-child{color:var(--parchment);font-weight:600;white-space:nowrap;}
+  .forms-table tr:hover td{background:rgba(91,163,217,.04);}
+
+  /* timeline */
+  .timeline{position:relative;padding-left:36px;}
+  .timeline::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:1px;background:linear-gradient(var(--gold),var(--blue),var(--violet));}
+  .tl-item{position:relative;padding-bottom:44px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:"";position:absolute;left:-36px;top:4px;width:11px;height:11px;
+    background:var(--bg);border:2px solid var(--gold);transform:rotate(45deg);
+  }
+  .tl-era{font-family:'Cinzel',serif;color:var(--gold);font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+  .tl-item h4{margin:0 0 8px;font-size:19px;}
+  .tl-item p{margin:0;color:var(--parchment-dim);font-size:15px;max-width:680px;}
+
+  /* figures */
+  .figure-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);}
+  .figure-card{background:var(--panel);padding:28px;}
+  .figure-card .role{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:10px;}
+  .figure-card h4{margin:0 0 10px;font-size:19px;font-family:'Cinzel',serif;}
+  .figure-card p{margin:0;font-size:14.5px;color:var(--parchment-dim);}
+
+  /* worlds */
+  .world-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;}
+  .world-card{border:1px solid var(--line);padding:26px;background:var(--panel-2);}
+  .world-card h4{margin:0 0 8px;font-family:'Cinzel',serif;font-size:18px;color:var(--gold);}
+  .world-card p{margin:0;color:var(--parchment-dim);font-size:14.5px;}
+
+  /* glossary */
+  .glossary{columns:2;column-gap:48px;}
+  @media (max-width:720px){.glossary{columns:1;}}
+  .g-entry{break-inside:avoid;margin-bottom:26px;}
+  .g-entry dt{font-family:'Cinzel',serif;color:var(--parchment);font-size:16px;margin-bottom:4px;}
+  .g-entry dd{margin:0;color:var(--parchment-dim);font-size:14.5px;}
+
+  footer{
+    padding:60px 6vw 50px;text-align:center;border-top:1px solid var(--line);
+    color:var(--parchment-dim);font-size:13px;letter-spacing:.05em;
+  }
+  footer .brand{justify-content:center;margin-bottom:14px;}
+
+  @media (prefers-reduced-motion: reduce){
+    .holocron{animation:none;}
+    .core{animation:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  @media (max-width:720px){
+    nav ul{display:none;}
+    section{padding:80px 6vw;}
+  }
+</style>
+</head>
+<body>
+<div class="starfield"></div>
+
+<nav>
+  <div class="brand"><span class="brand-mark"></span>Archives&nbsp;Jedi</div>
+  <ul>
+    <li><a href="#code">Le Code</a></li>
+    <li><a href="#voies">Les Voies</a></li>
+    <li><a href="#force">La Force</a></li>
+    <li><a href="#formes">Formes</a></li>
+    <li><a href="#chronique">Chronique</a></li>
+    <li><a href="#figures">Figures</a></li>
+    <li><a href="#mondes">Mondes</a></li>
+    <li><a href="#lexique">Lexique</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Compendium tenu par l'Ordre — Édition des Érudits</div>
+  <h1>Chroniques de<br>l'Ordre Jedi</h1>
+  <p class="sub">Un recueil de savoirs tirés de Star Wars: The Old Republic — le Code, les voies du Chevalier et du Consulaire, la Force, les formes de combat, et l'histoire de l'Ordre à travers les âges de la Vieille République.</p>
+
+  <div class="holocron-wrap">
+    <div class="holocron">
+      <div class="face f1"></div>
+      <div class="face f2"></div>
+      <div class="face f3"></div>
+      <div class="face f4"></div>
+      <div class="face f5"></div>
+      <div class="face f6"></div>
+      <div class="core"></div>
+    </div>
+  </div>
+  <div class="holocron-caption">Holocron d'archive · rotation perpétuelle</div>
+
+  <div class="scroll-cue">Descendre dans les archives</div>
+</header>
+
+<section id="code">
+  <div class="section-head"><span class="section-num">I.</span><h2>Le Code Jedi</h2><span class="rule"></span></div>
+  <p class="kicker">Le Code n'est pas une loi imposée mais une boussole intérieure, transmise de maître à apprenti depuis la fondation de l'Ordre sur Tython. Chaque principe s'énonce comme un mouvement : d'un état à un autre, jamais comme une interdiction sèche.</p>
+  <div class="code-grid">
+    <div class="code-cell">
+      <div class="tenet">De l'émotion vers la paix</div>
+      <p>Le Jedi apprend à reconnaître la peur, la colère ou le chagrin sans les laisser gouverner son jugement — la sérénité s'acquiert, elle ne s'impose pas.</p>
+    </div>
+    <div class="code-cell">
+      <div class="tenet">De l'ignorance vers la connaissance</div>
+      <p>L'étude, l'observation et l'humilité intellectuelle sont des devoirs autant que des vertus : un Jedi qui cesse d'apprendre cesse de servir.</p>
+    </div>
+    <div class="code-cell">
+      <div class="tenet">De la passion vers la sérénité</div>
+      <p>L'attachement possessif trouble le discernement ; la sérénité laisse place à une compassion plus large, détachée du désir de possession.</p>
+    </div>
+    <div class="code-cell">
+      <div class="tenet">Du chaos vers l'harmonie</div>
+      <p>Le Jedi cherche l'équilibre entre les êtres et les mondes, préférant la médiation à la domination, la protection à la conquête.</p>
+    </div>
+    <div class="code-cell">
+      <div class="tenet">De la mort vers la Force</div>
+      <p>La mort n'est pas une fin mais une dissolution dans le grand courant de la Force — d'où la relative absence de crainte du Jedi face à son propre trépas.</p>
+    </div>
+    <div class="code-cell">
+      <div class="tenet">Le débat des Consulaires</div>
+      <p>Sur Tython, les maîtres consulaires rappellent que le Code se médite plus qu'il ne se récite : chaque génération le réinterprète face à ses propres crises.</p>
+    </div>
+  </div>
+</section>
+
+<section id="voies">
+  <div class="section-head"><span class="section-num">II.</span><h2>Les Deux Voies</h2><span class="rule"></span></div>
+  <p class="kicker">Sur Tython puis à l'Académie de Coruscant, chaque initié est orienté vers l'une des deux grandes disciplines de l'Ordre, selon son tempérament et sa relation à la Force.</p>
+  <div class="path-grid">
+    <div class="path-card knight">
+      <span class="tag">Voie du Corps et de l'Action</span>
+      <h3>Le Chevalier Jedi</h3>
+      <p>Formé au combat direct et à l'intervention de terrain, le Chevalier incarne la Force en mouvement : premier sur le front, protecteur des innocents, il porte le sabre laser comme extension de sa volonté plus que comme simple arme.</p>
+      <div class="spec-row">
+        <span class="spec-pill">Gardien — bouclier vivant, maîtrise défensive</span>
+        <span class="spec-pill">Sentinelle — frappe furtive, double lame</span>
+      </div>
+    </div>
+    <div class="path-card consular">
+      <span class="tag">Voie de l'Esprit et de la Méditation</span>
+      <h3>Le Consulaire Jedi</h3>
+      <p>Tourné vers l'étude de la Force elle-même, le Consulaire explore la télékinésie, la guérison et la clairvoyance. Il agit souvent en retrait, préférant la persuasion, le soin ou la manipulation subtile des énergies à l'affrontement frontal.</p>
+      <div class="spec-row">
+        <span class="spec-pill">Sage — soin et projection télékinétique</span>
+        <span class="spec-pill">Ombre — infiltration, combat au double sabre</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="force">
+  <div class="section-head"><span class="section-num">III.</span><h2>Manifestations de la Force</h2><span class="rule"></span></div>
+  <p class="kicker">Les techniques enseignées dans les temples de l'Ordre relèvent toutes du côté lumineux, mais leurs applications varient considérablement d'une spécialisation à l'autre.</p>
+  <div class="force-list">
+    <div class="force-item"><h4>Poussée / Traction de la Force</h4><p>Manipulation télékinétique directe, utilisée aussi bien pour désarmer un adversaire que pour déplacer un obstacle.</p></div>
+    <div class="force-item"><h4>Guérison par la Force</h4><p>Canalisation de l'énergie vitale pour refermer les blessures d'un allié — art principalement maîtrisé par les Sages consulaires.</p></div>
+    <div class="force-item"><h4>Clairvoyance</h4><p>Perception étendue au-delà des sens physiques, permettant d'anticiper une attaque ou de repérer un esprit caché dans la foule.</p></div>
+    <div class="force-item"><h4>Vague de la Force</h4><p>Onde de choc repoussant plusieurs assaillants à la fois, souvent employée pour rompre un encerclement.</p></div>
+    <div class="force-item"><h4>Camouflage</h4><p>Technique d'Ombre consistant à courber la lumière autour de soi pour approcher une cible sans être détecté.</p></div>
+    <div class="force-item"><h4>Frappe du Maître</h4><p>Capacité culminante du Gardien : une série de coups canalisés par une concentration totale de la Force, réservée aux moments décisifs.</p></div>
+  </div>
+</section>
+
+<section id="formes">
+  <div class="section-head"><span class="section-num">IV.</span><h2>Les Formes du Sabre Laser</h2><span class="rule"></span></div>
+  <p class="kicker">Sept formes classiques structurent l'enseignement du combat au sabre à travers l'histoire de l'Ordre. Chaque Jedi en privilégie une ou deux selon sa spécialisation.</p>
+  <table class="forms-table">
+    <thead><tr><th>Forme</th><th>Principe</th><th>Association typique</th></tr></thead>
+    <tbody>
+      <tr><td>Shii-Cho</td><td>Forme originelle, large et directe ; base de tout apprentissage du sabre.</td><td>Initiés, tous parcours</td></tr>
+      <tr><td>Makashi</td><td>Duel élégant à une main, précision et économie de mouvement.</td><td>Duellistes, Sentinelles</td></tr>
+      <tr><td>Soresu</td><td>Forme défensive par excellence, absorbe et redirige plutôt qu'elle n'attaque.</td><td>Gardiens</td></tr>
+      <tr><td>Ataru</td><td>Style acrobatique et agressif, exploitant la mobilité et le terrain.</td><td>Sentinelles, Ombres</td></tr>
+      <tr><td>Shien / Djem So</td><td>Adaptation offensive de Soresu, transformant la défense en contre-attaque.</td><td>Gardiens en position offensive</td></tr>
+      <tr><td>Niman</td><td>Forme hybride équilibrant sabre et pouvoirs de la Force.</td><td>Consulaires polyvalents</td></tr>
+      <tr><td>Juyo / Vaapad</td><td>Forme la plus intense, canalisant une agressivité contrôlée à la lisière du côté obscur.</td><td>Rare, réservée aux maîtres avertis</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="chronique">
+  <div class="section-head"><span class="section-num">V.</span><h2>Chronique de l'Ordre</h2><span class="rule"></span></div>
+  <p class="kicker">Les grandes lignes de l'histoire jedi telle que la traverse Star Wars: The Old Republic, depuis la Grande Guerre Galactique jusqu'aux conflits de l'ère Zakuul.</p>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-era">Grande Guerre Galactique</div>
+      <h4>Chute de Coruscant et Traité de Coruscant</h4>
+      <p>L'Empire Sith resurgi frappe la capitale républicaine. L'Ordre Jedi, affaibli, doit accepter une paix humiliante qui redessine la carte du pouvoir dans la galaxie.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-era">Guerre Froide</div>
+      <h4>Reconstruction sur Tython</h4>
+      <p>Les Jedi rétablissent leur académie originelle sur Tython, tandis que des opérations secrètes contre l'Empire se multiplient sous couvert de paix officielle.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-era">Ombre de Revan</div>
+      <h4>Le retour d'un ancien héros</h4>
+      <p>D'anciens disciples de Revan, ralliés à une vision extrême de son héritage, menacent l'équilibre entre Empire et République, forçant Jedi et Sith à une coopération de circonstance.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-era">Chevaliers de l'Empire Déchu</div>
+      <h4>L'Empire Éternel de Zakuul</h4>
+      <p>Un pouvoir isolationniste venu de Zakuul écrase République et Empire Sith. De nombreux Jedi tombent ou disparaissent durant les cinq années de captivité qui suivent.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-era">Trône Éternel</div>
+      <h4>Guerre de succession</h4>
+      <p>La fracture de la famille régnante de Zakuul plonge la galaxie dans un nouveau conflit, où d'anciens Jedi reprennent les armes pour limiter les dégâts.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-era">Héritage des Sith</div>
+      <h4>Réforme et division de l'Ordre</h4>
+      <p>Face à une République exsangue, l'Ordre Jedi se divise sur la meilleure façon de servir la galaxie — certains prônant un retour à la tradition, d'autres une adaptation radicale.</p>
+    </div>
+  </div>
+</section>
+
+<section id="figures">
+  <div class="section-head"><span class="section-num">VI.</span><h2>Figures de l'Ordre</h2><span class="rule"></span></div>
+  <p class="kicker">Quelques silhouettes marquantes citées dans les registres de l'Ordre durant cette période.</p>
+  <div class="figure-grid">
+    <div class="figure-card">
+      <div class="role">Grand Maître</div>
+      <h4>Satele Shan</h4>
+      <p>Descendante d'une lignée légendaire, elle guide le Conseil Jedi durant la Guerre Froide et les crises qui suivent, entre diplomatie prudente et interventions décisives.</p>
+    </div>
+    <div class="figure-card">
+      <div class="role">Historien de l'Ordre</div>
+      <h4>Gnost-Dural</h4>
+      <p>Gardien de la mémoire jedi, il consacre sa vie à consigner les événements de la Guerre Froide pour les générations futures — figure tutélaire de tout érudit de l'Ordre.</p>
+    </div>
+    <div class="figure-card">
+      <div class="role">Maître de l'Académie</div>
+      <h4>Orgus Din</h4>
+      <p>Formateur exigeant sur Tython, il incarne la rigueur martiale attendue des jeunes Chevaliers avant leur premier déploiement.</p>
+    </div>
+    <div class="figure-card">
+      <div class="role">Conseillère</div>
+      <h4>Bela Kiwiiks</h4>
+      <p>Voix mesurée du Conseil, souvent consultée sur les questions touchant à l'équilibre entre tradition et nécessité stratégique.</p>
+    </div>
+  </div>
+</section>
+
+<section id="mondes">
+  <div class="section-head"><span class="section-num">VII.</span><h2>Mondes Sacrés</h2><span class="rule"></span></div>
+  <div class="world-grid">
+    <div class="world-card"><h4>Tython</h4><p>Berceau originel de l'Ordre, où les premiers Jedi ont formulé le Code au contact d'un puissant courant de la Force lumineuse.</p></div>
+    <div class="world-card"><h4>Coruscant</h4><p>Siège du Temple Jedi moderne et du Conseil, au cœur battant de la République galactique.</p></div>
+    <div class="world-card"><h4>Ossus</h4><p>Ancien centre du savoir jedi, dont les archives englouties attirent encore chercheurs et pillards.</p></div>
+    <div class="world-card"><h4>Voss</h4><p>Monde mystique où les visions locales entrent parfois en résonance troublante avec la clairvoyance jedi.</p></div>
+  </div>
+</section>
+
+<section id="lexique">
+  <div class="section-head"><span class="section-num">VIII.</span><h2>Lexique de l'Érudit</h2><span class="rule"></span></div>
+  <dl class="glossary">
+    <div class="g-entry"><dt>Padawan</dt><dd>Apprenti jedi lié à un maître unique jusqu'à l'obtention du grade de Chevalier.</dd></div>
+    <div class="g-entry"><dt>Holocron</dt><dd>Dispositif de stockage de savoir imprégné de la Force, parfois gardien d'une conscience partielle de son créateur.</dd></div>
+    <div class="g-entry"><dt>Côté obscur</dt><dd>Versant de la Force nourri par la peur, la colère et le désir de domination — antithèse du Code.</dd></div>
+    <div class="g-entry"><dt>Conseil Jedi</dt><dd>Instance collégiale de maîtres qui oriente la doctrine et les missions de l'Ordre.</dd></div>
+    <div class="g-entry"><dt>Lien de Force</dt><dd>Connexion durable entre deux esprits, parfois entre maître et apprenti, parfois entre adversaires.</dd></div>
+    <div class="g-entry"><dt>Temple</dt><dd>Lieu consacré à l'entraînement et à la méditation, présent sur plusieurs mondes de la République.</dd></div>
+    <div class="g-entry"><dt>Erreur consulaire</dt><dd>Expression désignant, dans les débats internes, une interprétation trop rigide du Code au détriment du discernement.</dd></div>
+    <div class="g-entry"><dt>Ordre Jedi</dt><dd>Institution millénaire vouée à la paix, à la connaissance et à la protection de la galaxie par la maîtrise du côté lumineux.</dd></div>
+  </dl>
+</section>
+
+<footer>
+  <div class="brand"><span class="brand-mark"></span>Archives Jedi</div>
+  Compendium non officiel rédigé pour l'étude et le plaisir des érudits — inspiré de l'univers de Star Wars: The Old Republic.
+</footer>
+
+</body>
+</html>
